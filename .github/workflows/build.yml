@@ -61,15 +61,13 @@ jobs:
                     memory_size: 64 * 1024 * 1024,
                     vga_memory_size: 8 * 1024 * 1024,
 
-                    // Your FAT disk image
                     hda: { url: "disk.img" },
 
-                    // v86 kernel + initrd
-                    kernel_url: "https://copy.sh/v86/buildroot-bzImage",
-                    initrd_url: "https://copy.sh/v86/buildroot-initrd.img",
+                    kernel_url: "https://v86.pages.dev/bzImage",
+                    initrd_url: "https://v86.pages.dev/initrd.img",
 
-                    // Boot parameters
-                    cmdline: "console=ttyS0 root=/dev/ram0",
+                    // THIS LINE AUTO-RUNS YOUR init.sh
+                    cmdline: "console=ttyS0 init=/init.sh",
 
                     autostart: true
                 });
