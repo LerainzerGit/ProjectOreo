@@ -23,7 +23,7 @@ jobs:
 
     - name: Build Project Oreo core
       run: |
-        mcs Program.cs Sudo.cs -out:terminalos.exe
+        mcs Program.cs Sudo.cs Screen.cs -out:terminalos.exe
 
     - name: Build apps
       run: |
