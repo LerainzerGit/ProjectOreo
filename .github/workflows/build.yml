@@ -39,7 +39,7 @@ jobs:
         cp miniedit.exe iso/bin/
         cp snake.exe iso/bin/
         cp sysinfo.exe iso/bin/
-        cp init.sh iso/
+        cp $GITHUB_WORKSPACE/init.sh iso/
         chmod +x iso/init.sh
 
     - name: Build ISO
