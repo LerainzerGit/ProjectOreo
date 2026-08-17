@@ -19,7 +19,7 @@ jobs:
     - name: Install tools
       run: |
         sudo apt-get update
-        sudo apt-get install -y genisoimage mtools mono-devel
+        sudo apt-get install -y mtools mono-devel
 
     - name: Build Project Oreo core
       run: |
@@ -60,7 +60,17 @@ jobs:
                 var emulator = new V86({
                     memory_size: 64 * 1024 * 1024,
                     vga_memory_size: 8 * 1024 * 1024,
+
+                    // Your FAT disk image
                     hda: { url: "disk.img" },
+
+                    // v86 kernel + initrd
+                    kernel_url: "https://copy.sh/v86/buildroot-bzImage",
+                    initrd_url: "https://copy.sh/v86/buildroot-initrd.img",
+
+                    // Boot parameters
+                    cmdline: "console=ttyS0 root=/dev/ram0",
+
                     autostart: true
                 });
             </script>
