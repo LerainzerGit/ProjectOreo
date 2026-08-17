@@ -13,7 +13,7 @@ class Program
         while (true)
         {
             Console.Write("oreo> ");
-            string? input = Console.ReadLine();
+            string input = Console.ReadLine();
             if (string.IsNullOrWhiteSpace(input)) continue;
 
             string[] p = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
