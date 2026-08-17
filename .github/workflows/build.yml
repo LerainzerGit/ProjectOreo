@@ -1,4 +1,4 @@
-name: Build Project Oreo ISO
+name: Build Project Oreo ISO + Pages
 
 on:
   push:
@@ -14,7 +14,7 @@ jobs:
     - name: Install deps
       run: |
         sudo apt-get update
-        sudo apt-get install -y genisoimage mtools mono-devel
+        sudo apt-get install -y genisoimage mtools mono-devel unzip wget
 
     - name: Build Project Oreo core
       run: |
@@ -41,7 +41,41 @@ jobs:
       run: |
         genisoimage -o ProjectOreo.iso -b init.sh iso/
 
-    - name: Upload ISO
+    - name: Download minimal v86
+      run: |
+        mkdir docs
+        wget https://copy.sh/v86/build/v86.js -O docs/v86.js
+        wget https://copy.sh/v86/build/v86.wasm -O docs/v86.wasm
+
+    - name: Add boot page
+      run: |
+        cat << 'EOF' > docs/index.html
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Project Oreo</title>
+        </head>
+        <body>
+            <h1>Booting Project Oreo...</h1>
+            <script src="v86.js"></script>
+            <script>
+                var emulator = new V86({
+                    wasm_path: "v86.wasm",
+                    memory_size: 64 * 1024 * 1024,
+                    vga_memory_size: 8 * 1024 * 1024,
+                    cdrom: { url: "ProjectOreo.iso" },
+                    autostart: true
+                });
+            </script>
+        </body>
+        </html>
+        EOF
+
+    - name: Copy ISO to docs
+      run: cp ProjectOreo.iso docs/
+
+    - name: Upload ISO artifact
       uses: actions/upload-artifact@v3
       with:
         name: ProjectOreo
