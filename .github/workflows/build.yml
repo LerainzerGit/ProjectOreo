@@ -16,7 +16,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install ISO tools
+    - name: Install tools
       run: |
         sudo apt-get update
         sudo apt-get install -y genisoimage mtools mono-devel
@@ -31,25 +31,21 @@ jobs:
         mcs apps/snake/snake.cs -out:snake.exe
         mcs apps/sysinfo/sysinfo.cs -out:sysinfo.exe
 
-    - name: Create ISO structure
+    - name: Create FAT disk image
       run: |
-        mkdir iso
-        mkdir iso/bin
-        cp terminalos.exe iso/bin/
-        cp miniedit.exe iso/bin/
-        cp snake.exe iso/bin/
-        cp sysinfo.exe iso/bin/
-        cp $GITHUB_WORKSPACE/init.sh iso/
-        chmod +x iso/init.sh
-
-    - name: Build ISO
-      run: |
-        genisoimage -o ProjectOreo.iso iso/
+        dd if=/dev/zero of=disk.img bs=1M count=64
+        mkfs.vfat disk.img
+        mmd -i disk.img ::/bin
+        mcopy -i disk.img terminalos.exe ::/bin/
+        mcopy -i disk.img miniedit.exe ::/bin/
+        mcopy -i disk.img snake.exe ::/bin/
+        mcopy -i disk.img sysinfo.exe ::/bin/
+        mcopy -i disk.img init.sh ::
 
     - name: Create public folder
       run: |
         mkdir public
-        cp ProjectOreo.iso public/
+        cp disk.img public/
         cat << 'EOF' > public/index.html
         <!DOCTYPE html>
         <html>
@@ -64,7 +60,7 @@ jobs:
                 var emulator = new V86({
                     memory_size: 64 * 1024 * 1024,
                     vga_memory_size: 8 * 1024 * 1024,
-                    cdrom: { url: "ProjectOreo.iso" },
+                    hda: { url: "disk.img" },
                     autostart: true
                 });
             </script>
