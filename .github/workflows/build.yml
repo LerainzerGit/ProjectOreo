@@ -16,7 +16,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install deps
+    - name: Install ISO tools
       run: |
         sudo apt-get update
         sudo apt-get install -y genisoimage mtools mono-devel
@@ -46,16 +46,36 @@ jobs:
       run: |
         genisoimage -o ProjectOreo.iso iso/
 
-    - name: Prepare Pages artifact
+    - name: Create public folder
       run: |
-        mkdir docs
-        cp ProjectOreo.iso docs/
-        cp docs/index.html docs/index.html
+        mkdir public
+        cp ProjectOreo.iso public/
+        cat << 'EOF' > public/index.html
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Project Oreo</title>
+        </head>
+        <body>
+            <h1>Booting Project Oreo...</h1>
+            <script src="https://v86.js.org/libv86.js"></script>
+            <script>
+                var emulator = new V86({
+                    memory_size: 64 * 1024 * 1024,
+                    vga_memory_size: 8 * 1024 * 1024,
+                    cdrom: { url: "ProjectOreo.iso" },
+                    autostart: true
+                });
+            </script>
+        </body>
+        </html>
+        EOF
 
     - name: Upload Pages artifact
       uses: actions/upload-pages-artifact@v4
       with:
-        path: docs
+        path: public
 
   deploy:
     needs: build
