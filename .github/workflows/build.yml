@@ -44,7 +44,7 @@ jobs:
 
     - name: Build ISO
       run: |
-        genisoimage -o ProjectOreo.iso -b init.sh iso/
+        genisoimage -o ProjectOreo.iso iso/
 
     - name: Prepare Pages artifact
       run: |
