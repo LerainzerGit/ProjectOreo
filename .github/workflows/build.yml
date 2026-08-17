@@ -1,0 +1,48 @@
+name: Build Project Oreo ISO
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install deps
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y genisoimage mtools mono-devel
+
+    - name: Build Project Oreo core
+      run: |
+        mcs Program.cs Sudo.cs -out:terminalos.exe
+
+    - name: Build apps
+      run: |
+        mcs apps/miniedit/miniedit.cs -out:miniedit.exe
+        mcs apps/snake/snake.cs -out:snake.exe
+        mcs apps/sysinfo/sysinfo.cs -out:sysinfo.exe
+
+    - name: Create ISO structure
+      run: |
+        mkdir iso
+        mkdir iso/bin
+        cp terminalos.exe iso/bin/
+        cp miniedit.exe iso/bin/
+        cp snake.exe iso/bin/
+        cp sysinfo.exe iso/bin/
+        cp init.sh iso/
+        chmod +x iso/init.sh
+
+    - name: Build ISO
+      run: |
+        genisoimage -o ProjectOreo.iso -b init.sh iso/
+
+    - name: Upload ISO
+      uses: actions/upload-artifact@v3
+      with:
+        name: ProjectOreo
+        path: ProjectOreo.iso
