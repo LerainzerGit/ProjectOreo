@@ -63,10 +63,11 @@ jobs:
 
                     hda: { url: "disk.img" },
 
+                    // SeaBIOS loads Linux kernel
                     kernel_url: "https://v86.pages.dev/bzImage",
                     initrd_url: "https://v86.pages.dev/initrd.img",
 
-                    // THIS LINE AUTO-RUNS YOUR init.sh
+                    // Linux runs your init.sh
                     cmdline: "console=ttyS0 init=/init.sh",
 
                     autostart: true
